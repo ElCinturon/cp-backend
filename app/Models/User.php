@@ -19,6 +19,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
+        'username',
         'email',
         'password',
     ];
@@ -42,4 +44,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function offsetUnset(mixed $offset): void
+    {}
+
+    public function escapeWhenCastingToString($escape = true)
+    {}
+
+    public function offsetGet(mixed $offset): mixed
+    {}
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {}
+
 }
