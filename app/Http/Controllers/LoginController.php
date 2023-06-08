@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use \Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
 {
-        public function authenticate(Request $request): RedirectResponse
+        public function authenticate(Request $request): Response
         {   
             // Übergeben Werte validieren
             $request->validate([
@@ -24,17 +25,14 @@ class LoginController extends Controller
             
             // Logindaten prüfen
             if (Auth::attempt([$identifierType => $identifier, 'password' => $request->input('password')], $request->input('stayLoggedIn'))) {
-                error_log('user gefunden');
                 $request->session()->regenerate();
 
-                // TODO: Redirect muss noch angepasst werden
-                return redirect()->intended('dashboard');
+                // Login erfolgreich Return HTTP-Code 200
+                return response('', 200);
             }
 
             
-            // TODO: Muss noch angepasst werden
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ])->onlyInput('email');
+            // Login fehlgeschlagen. Return 401
+            return response('Der angegebene Nutzer existiert nicht oder das Passwort ist nicht korrekt.', 401);
         }
 }

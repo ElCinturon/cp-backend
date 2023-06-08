@@ -15,22 +15,3 @@ use http\Client\Request;
  * |
  */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-// Login
-Route::post('/login', [
-    LoginController::class,
-    'authenticate'
-]);
-
-// Registrierung
-Route::post('/registration', [
-    RegistrationController::class,
-    'register'
-]);
