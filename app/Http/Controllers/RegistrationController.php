@@ -2,15 +2,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class RegistrationController extends Controller
 {
 
-    public function register(Request $request): RedirectResponse
+    public function register(Request $request): Response
     {
-        // Übergeben Werte validieren
+        // Übergebene Werte validieren
         $request->validate([
             'username' => [
                 'required'
@@ -30,23 +30,16 @@ class RegistrationController extends Controller
             ]
         ]);
 
-        error_log(implode('.', $request->all()));
-        
-        foreach($request->all() as $key => $value) {
-            error_log("$key is at $value");
-        }
-        
         $user = new User();
         $user->fill($request->all());
 
-        $user->save();
+        $saved = $user->save();
 
-        // TODO: Redirect muss noch angepasst werden
-        return redirect()->intended('dashboard');
-
-        // TODO: Muss noch angepasst werden
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.'
-        ])->onlyInput('email');
+        // Wenn User erfolgreich angelegt, 200 zurückgeben. Sonst Fehler.
+        if ($saved) {
+            return response()->json(['username' => $user->username]);
+        } else {
+            return response('Bei der Registrierung ist ein Fehler aufgetreten', 500);
+        }
     }
 }
