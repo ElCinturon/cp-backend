@@ -18,7 +18,7 @@ class RegistrationController extends Controller
             'name' => [
                 'required'
             ],
-            'last_name' => [
+            'lastName' => [
                 'required'
             ],
             'email' => [
@@ -32,7 +32,7 @@ class RegistrationController extends Controller
 
         $user = new User();
         $user->fill($request->all());
-
+        
         $saved = $user->save();
 
         // Wenn User erfolgreich angelegt, 200 zurückgeben. Sonst Fehler.
