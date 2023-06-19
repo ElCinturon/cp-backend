@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\UserController;
+use Symfony\Component\HttpFoundation\Response;
 
 /*
  * |--------------------------------------------------------------------------
@@ -17,7 +19,7 @@ use App\Http\Controllers\RegistrationController;
  */
 
 // Nur nutzen wenn user eingeloggt sein muss?
-//Route::middleware('auth:sanctum')->
+// Route::middleware('auth:sanctum')->
 
 // Login
 Route::post('/login', [
@@ -25,9 +27,29 @@ Route::post('/login', [
     'authenticate'
 ]);
 
-
 // Registrierung
 Route::post('/registration', [
     RegistrationController::class,
     'register'
 ]);
+
+Route::controller(UserController::class)->group(function () {
+
+    Route::prefix('user')->group(function () {
+
+        // User anhand von username abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
+        Route::get('username/exists/{user:username}', 'exists')->missing(function ($request) {
+            return response()->json([
+                'userExists' => false
+            ]);
+        });
+
+        // User anhand von Email abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
+        Route::get('email/exists/{user:email}', 'exists')->missing(function ($request) {
+            return response()->json([
+                'userExists' => false
+            ]);
+        });
+    });
+});
+
