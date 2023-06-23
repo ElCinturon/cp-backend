@@ -1,7 +1,10 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\ResponseHelper\ErrorResponse;
+use App\ResponseHelper\SuccessfulResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,14 +35,14 @@ class RegistrationController extends Controller
 
         $user = new User();
         $user->fill($request->all());
-        
+
         $saved = $user->save();
 
-        // Wenn User erfolgreich angelegt, 200 zurückgeben. Sonst Fehler.
+        // Wenn User erfolgreich angelegt, 201 zurückgeben. Sonst Fehler.
         if ($saved) {
-            return response()->json(['username' => $user->username]);
+            return SuccessfulResponse::respondSuccess(['username' => $user->username], 201);
         } else {
-            return response('Bei der Registrierung ist ein Fehler aufgetreten', 500);
+            return ErrorResponse::respondErrorMsg('Bei der Registrierung ist ein Fehler aufgetreten');
         }
     }
 }

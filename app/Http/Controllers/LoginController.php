@@ -2,36 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\ResponseHelper\ErrorResponse;
+use App\ResponseHelper\SuccessfulResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use \Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
 {
-        public function authenticate(Request $request): Response
-        {   
-            // Übergeben Werte validieren
-            $request->validate([
-                'userIdentifier' => ['required'],
-                'password' => ['required'],
-                'stayLoggedIn' => ['boolean']
-            ]);
-            
-            
-            // Identifier auslesen und prüfen ob email oder User übergeben wurde
-            $identifier = $request->input('userIdentifier');
-            $identifierType = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';        
-            
-            // Logindaten prüfen
-            if (Auth::attempt([$identifierType => $identifier, 'password' => $request->input('password')], $request->input('stayLoggedIn'))) {
-                $request->session()->regenerate();
+    public function authenticate(Request $request): Response
+    {
+        // Übergeben Werte validieren
+        $request->validate([
+            'userIdentifier' => ['required'],
+            'password' => ['required'],
+            'stayLoggedIn' => ['boolean', 'nullable']
+        ]);
 
-                // Login erfolgreich Return HTTP-Code 200
-                return response('', 200);
-            }
+        // Identifier auslesen und prüfen ob email oder User übergeben wurde
+        $identifier = $request->input('userIdentifier');
+        $identifierType = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-            
-            // Login fehlgeschlagen. Return 401
-            return response('Der angegebene Nutzer existiert nicht oder das Passwort ist nicht korrekt.', 401);
+        // Logindaten prüfen
+        if (Auth::attempt([$identifierType => $identifier, 'password' => $request->input('password')], $request->input('stayLoggedIn'))) {
+            $request->session()->regenerate();
+
+            // Login erfolgreich Return HTTP-Code 200
+            return SuccessfulResponse::respondSuccess();
         }
+
+        // Login fehlgeschlagen.
+        return ErrorResponse::respondErrorMsg('Der angegebene Nutzer existiert nicht oder das Passwort ist nicht korrekt.');
+    }
 }
