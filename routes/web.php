@@ -1,8 +1,5 @@
 <?php
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\RegistrationController;
-use Illuminate\Support\Facades\Route;
-use http\Client\Request;
+
 
 /*
  * |--------------------------------------------------------------------------
@@ -14,4 +11,3 @@ use http\Client\Request;
  * | be assigned to the "web" middleware group. Make something great!
  * |
  */
-
