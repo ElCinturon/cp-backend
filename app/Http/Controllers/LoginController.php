@@ -27,8 +27,10 @@ class LoginController extends Controller
         if (Auth::attempt([$identifierType => $identifier, 'password' => $request->input('password')], $request->input('stayLoggedIn'))) {
             $request->session()->regenerate();
 
-            // Login erfolgreich Return HTTP-Code 200
-            return SuccessfulResponse::respondSuccess();
+            $user = Auth::user();
+
+            // Login erfolgreich Return Username
+            return SuccessfulResponse::respondSuccess(["username" => $user->username]);
         }
 
         // Login fehlgeschlagen.
