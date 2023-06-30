@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('portfolio_entry_values', function (Blueprint $table) {
             $table->id();
             $table->foreignId('portfolio_entries_id')->constrained();
-            $table->dateTime('zeitpunkt');
-            $table->decimal('wert', 12, 2);
+            $table->dateTime('time');
+            $table->decimal('value', 12, 2);
 
-            $table->unique(['portfolio_entries_id', 'zeitpunkt']);
+            $table->unique(['portfolio_entries_id', 'time']);
         });
     }
 

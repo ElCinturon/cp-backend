@@ -14,17 +14,17 @@ return new class extends Migration
     {
         Schema::create('portfolio_types', function (Blueprint $table) {
             $table->id();
-            $table->string('bezeichnung')->unique();
-            $table->string('kuerzel')->unique();
+            $table->string('description')->unique();
+            $table->string('code')->unique();
         });
 
         DB::table('portfolio_types')->insert([
-            ['bezeichnung' => 'Wertpapiere', 'kuerzel' => 'wp'],
-            ['bezeichnung' => 'Immobilien', 'kuerzel' => 'im'],
-            ['bezeichnung' => 'Fahrzeuge', 'kuerzel' => 'fz'],
-            ['bezeichnung' => 'Barvermögen', 'kuerzel' => 'bv'],
-            ['bezeichnung' => 'Schmuck', 'kuerzel' => 'sm'],
-            ['bezeichnung' => 'Sonstiges', 'kuerzel' => 'so'],
+            ['description' => 'Wertpapiere', 'code' => 'wp'],
+            ['description' => 'Immobilien', 'code' => 'im'],
+            ['description' => 'Fahrzeuge', 'code' => 'fz'],
+            ['description' => 'Barvermögen', 'code' => 'bv'],
+            ['description' => 'Schmuck', 'code' => 'sm'],
+            ['description' => 'Sonstiges', 'code' => 'so'],
         ]);
     }
 
