@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PortfolioController;
 
 
 /*
@@ -18,8 +19,6 @@ use App\Http\Controllers\UserController;
  * |
  */
 
-// Nur nutzen wenn user eingeloggt sein muss
-// middleware('auth:sanctum')->
 
 // Login
 Route::post('/login', [
@@ -33,22 +32,32 @@ Route::post('/registration', [
     'register'
 ]);
 
+// User routes
 Route::controller(UserController::class)->group(function () {
 
     Route::prefix('user')->group(function () {
 
         // User anhand von username abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
-        Route::get('username/exists/{user:username}', 'exists')->missing(function () {
-            return response()->json([
-                'userExists' => false
-            ]);
-        });
+        Route::get('username/exists/{user:username}', 'exists')
+            ->missing(function () {
+                return response()->json([
+                    'userExists' => false
+                ]);
+            });
 
         // User anhand von Email abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
-        Route::get('email/exists/{user:email}', 'exists')->missing(function () {
-            return response()->json([
-                'userExists' => false
-            ]);
-        });
+        Route::get('email/exists/{user:email}', 'exists')
+            ->missing(function () {
+                return response()->json([
+                    'userExists' => false
+                ]);
+            });
     });
+});
+
+// Portfolio routes
+Route::prefix('portfolio')->group(function () {
+
+    // Portfoliotypen abrufen
+    Route::get('types', [PortfolioController::class, 'getAllTypes']);
 });
