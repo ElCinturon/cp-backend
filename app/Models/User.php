@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 use App\Models\BaseUser;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends BaseUser
 {
@@ -44,17 +45,25 @@ class User extends BaseUser
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    
+
+    public function portfolios(): HasMany
+    {
+        return $this->hasMany(Portfolio::class);
+    }
+
     public function offsetUnset(mixed $offset): void
-    {}
+    {
+    }
 
     public function escapeWhenCastingToString($escape = true)
-    {}
+    {
+    }
 
     public function offsetGet(mixed $offset): mixed
-    {}
+    {
+    }
 
     public function offsetSet(mixed $offset, mixed $value): void
-    {}
-
+    {
+    }
 }

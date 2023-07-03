@@ -6,7 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PortfolioController;
-
+use App\ResponseHelper\ErrorResponse;
 
 /*
  * |--------------------------------------------------------------------------
@@ -40,7 +40,7 @@ Route::controller(UserController::class)->group(function () {
         // User anhand von username abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
         Route::get('username/exists/{user:username}', 'exists')
             ->missing(function () {
-                return response()->json([
+                return ErrorResponse::respondErrorMsg([
                     'userExists' => false
                 ]);
             });
@@ -55,8 +55,14 @@ Route::controller(UserController::class)->group(function () {
     });
 });
 
+
 // Portfolio routes
-Route::prefix('portfolio')->group(function () {
+Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
+    // Alle Portfolios vom User abrufen
+    Route::get('', [PortfolioController::class, 'getAll']);
+
+    // Neues Portfolio speichern
+    Route::post('', [PortfolioController::class, 'add']);
 
     // Portfoliotypen abrufen
     Route::get('types', [PortfolioController::class, 'getAllTypes']);

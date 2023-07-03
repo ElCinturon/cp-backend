@@ -16,14 +16,12 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->dateTime('created_at');
+            $table->dateTime('updated_at');
             $table->foreignId('type_id')->constrained('portfolio_types')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
             $table->unique(['user_id', 'description', 'type_id']);
         });
-
-        // Erstellungsdatum setzen
-        DB::unprepared('CREATE TRIGGER portfolios_now BEFORE INSERT ON portfolios FOR EACH ROW SET @description = NOW()');
     }
 
     /**

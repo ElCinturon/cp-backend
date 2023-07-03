@@ -17,12 +17,10 @@ return new class extends Migration
             $table->foreignId('portfolio_id')->constrained();
             $table->string('description');
             $table->dateTime('created_at');
+            $table->dateTime('updated_at');
 
             $table->unique(['portfolio_id', 'description']);
         });
-
-        // Erstellungsdatum setzen
-        DB::unprepared('CREATE TRIGGER portfolio_entries_now BEFORE INSERT ON portfolio_entries FOR EACH ROW SET @created_at = NOW()');
     }
 
     /**
