@@ -16,6 +16,11 @@ class Portfolio extends BaseModel
         return $this->belongsTo(User::class);
     }
 
+    public function portfolioType(): BelongsTo
+    {
+        return $this->belongsTo(PortfolioType::class, 'type_id');
+    }
+
     protected $fillable = [
         'description',
         'type_id',

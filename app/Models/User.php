@@ -50,20 +50,4 @@ class User extends BaseUser
     {
         return $this->hasMany(Portfolio::class);
     }
-
-    public function offsetUnset(mixed $offset): void
-    {
-    }
-
-    public function escapeWhenCastingToString($escape = true)
-    {
-    }
-
-    public function offsetGet(mixed $offset): mixed
-    {
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-    }
 }

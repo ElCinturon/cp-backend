@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PortfolioResource;
 use App\Models\Portfolio;
 use App\Models\PortfolioType;
 use App\ResponseHelper\ErrorResponse;
@@ -9,6 +10,7 @@ use App\ResponseHelper\SuccessfulResponse;
 use \Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PortfolioController extends Controller
 {
@@ -44,11 +46,12 @@ class PortfolioController extends Controller
     }
 
     // Gibt alle Portfolios des aktuellen Users zurück
-    public function getAll(): Response
+    public function getAll(): AnonymousResourceCollection
     {
-        $portfolios = Portfolio::whereBelongsTo(Auth::user()->id)->get();
+        $portfolios = Portfolio::with(['portfolioType'])->whereBelongsTo(Auth::user());
+        $portfolios = $portfolios->get();
 
-        return response($portfolios);
+        return PortfolioResource::collection($portfolios);
     }
 
     // Gibt alle Portfoliotypen zurück
