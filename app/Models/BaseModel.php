@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -52,5 +53,30 @@ class BaseModel extends Model
         }
 
         parent::fill($attributes);
+    }
+
+    // Sorgt dafür, dass beim Abruf des Arrays der Models die Keys immer CamelCase sind.
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        // Alle attribute in camelCase umwandeln
+        return $this->setKeysCamelCaseRecursive($array);
+    }
+
+    // Setzt alle Keys eines Arrays rekursiv als CamelCase. Rückgabe enthält ein neues Array 
+    private function setKeysCamelCaseRecursive(array $array)
+    {
+        $result = [];
+        foreach ($array as $key => $value) {
+            // Wenn Value Array ist, dessen Werte durchlaufen und zurückgeben
+            if (is_array($value)) {
+                $result[Str::camel($key)] = $this->setKeysCamelCaseRecursive($value);
+            } else {
+                // Neuen Key im Camel-Case setzen und alten verwerfen
+                $result[Str::camel($key)] = $value;
+            }
+        }
+        return $result;
     }
 }

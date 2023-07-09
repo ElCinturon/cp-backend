@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PortfolioResource;
 use App\Models\Portfolio;
 use App\Models\PortfolioType;
 use App\ResponseHelper\ErrorResponse;
@@ -10,7 +9,7 @@ use App\ResponseHelper\SuccessfulResponse;
 use \Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
 
 class PortfolioController extends Controller
 {
@@ -39,19 +38,19 @@ class PortfolioController extends Controller
         $portfolio = Portfolio::firstOrCreate(['description' => $description, 'type_id' =>  $typeId, 'user_id' => Auth::user()->id]);
 
         if (!$portfolio->wasRecentlyCreated) {
-            return ErrorResponse::respondErrorMsg(['description' => 'Es existiert bereits ein Portfolio mit dieser Bezeichnung.']);
+            return ErrorResponse::respondErrorMsg(['description' => 'Es existiert bereits ein Portfolio mit dieser Bezeichnung zu diesem Typen.']);
         }
 
         return SuccessfulResponse::respondSuccess(status: 201);
     }
 
     // Gibt alle Portfolios des aktuellen Users zurück
-    public function getAll(): AnonymousResourceCollection
+    public function getAll(): Response
     {
         $portfolios = Portfolio::with(['portfolioType'])->whereBelongsTo(Auth::user());
         $portfolios = $portfolios->get();
 
-        return PortfolioResource::collection($portfolios);
+        return response($portfolios);
     }
 
     // Gibt alle Portfoliotypen zurück
