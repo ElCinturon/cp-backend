@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Portfolio extends BaseModel
 {
@@ -19,6 +19,12 @@ class Portfolio extends BaseModel
     public function portfolioType(): BelongsTo
     {
         return $this->belongsTo(PortfolioType::class, 'type_id');
+    }
+
+    // Beziehung zu Entries herstellen
+    public function portfolioEntries(): HasMany
+    {
+        return $this->hasMany(PortfolioEntry::class);
     }
 
     protected $fillable = [

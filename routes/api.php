@@ -62,11 +62,14 @@ Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
     Route::get('', [PortfolioController::class, 'getAll']);
 
     // Portfolio anhand von ID abrufen
-    Route::get('/{id}', [PortfolioController::class, 'getOneById'])->whereNumber('id');
+    Route::get('{id}', [PortfolioController::class, 'getOneById'])->whereNumber('id');
 
     // Neues Portfolio speichern
     Route::post('', [PortfolioController::class, 'add']);
 
     // Portfoliotypen abrufen
     Route::get('types', [PortfolioController::class, 'getAllTypes']);
+
+    // Neuen Portfolioentry speichern
+    Route::post('entry', [PortfolioController::class, 'addEntry']);
 });

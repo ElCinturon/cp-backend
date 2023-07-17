@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
+use App\Models\PortfolioEntry;
+use App\Models\PortfolioEntryValue;
 use App\Models\PortfolioType;
 use App\ResponseHelper\ErrorResponse;
 use App\ResponseHelper\SuccessfulResponse;
@@ -71,5 +73,47 @@ class PortfolioController extends Controller
         }
 
         return SuccessfulResponse::respondSuccess($portfolio);
+    }
+
+    // Speichert neuen Portfolioeintrag für aktuellen Nutzer
+    public function addEntry(Request $request): Response
+    {
+        $request->validate([
+            'description' => [
+                'required', 'string'
+            ], 'value' => [
+                'required', 'numeric'
+            ], 'datetime' => [
+                'required', 'date'
+            ],
+            'portfolioId' => [
+                'required', 'numeric'
+            ]
+
+        ]);
+
+        $description = $request->input('description');
+        $portfolioId = $request->input('portfolioId');
+        $timestamp = $request->input('datetime');
+        $value = $request->input('value');
+
+        // Portfolio-Id des Users existiert?
+        $portfolioExists = Portfolio::find($portfolioId)->whereBelongsTo(Auth::user())->exist();
+
+        if (!$portfolioExists) {
+            return ErrorResponse::respondErrorMsg('Das angegebene Portfolio kann dem User nicht zugeordnet werden.');
+        }
+
+        // Portfolioeintrag anlegen wenn noch nicht existiert
+        $portfolioEntry = PortfolioEntry::firstOrCreate(['description' => $description, 'portfolio_id' => $portfolioId]);
+
+        if (!$portfolioEntry->wasRecentlyCreated) {
+            return ErrorResponse::respondErrorMsg(['description' => 'Es existiert bereits ein Eintrag mit dieser Bezeichnung.']);
+        }
+
+        // Anfangsvalue anlegen
+        PortfolioEntryValue::create(['portfolio_entries_id' => $portfolioEntry->id, 'time' => $timestamp, 'value' => $value]);
+
+        return SuccessfulResponse::respondSuccess(status: 201);
     }
 }
