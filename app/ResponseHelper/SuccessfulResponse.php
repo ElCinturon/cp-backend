@@ -11,6 +11,7 @@ class SuccessfulResponse
 
     public static function respondSuccess($data = null, $status = 200): Response
     {
-        return response()->json(AppResult::create(data: $data, success: true), $status);
+        $result = new AppResult(data: $data, success: true);
+        return response()->json($result->getAsArray(), $status);
     }
 }

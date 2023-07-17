@@ -58,4 +58,18 @@ class PortfolioController extends Controller
     {
         return response(PortfolioType::all());
     }
+
+    // Gibt Portfolio des aktuellen Nutzers anhand von ID zurück
+    public function getOneById(string $id): Response
+    {
+        $portfolio = Portfolio::whereBelongsTo(Auth::user())
+            ->with(['portfolioType'])
+            ->find($id);
+
+        if (!$portfolio) {
+            return ErrorResponse::respondErrorMsg('Das gesuchte Portfolio konnte nicht gefunden werden.');
+        }
+
+        return SuccessfulResponse::respondSuccess($portfolio);
+    }
 }

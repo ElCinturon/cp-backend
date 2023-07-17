@@ -61,6 +61,9 @@ Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
     // Alle Portfolios vom User abrufen
     Route::get('', [PortfolioController::class, 'getAll']);
 
+    // Portfolio anhand von ID abrufen
+    Route::get('/{id}', [PortfolioController::class, 'getOneById'])->whereNumber('id');
+
     // Neues Portfolio speichern
     Route::post('', [PortfolioController::class, 'add']);
 
