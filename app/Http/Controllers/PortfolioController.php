@@ -98,7 +98,7 @@ class PortfolioController extends Controller
         $value = $request->input('value');
 
         // Portfolio-Id des Users existiert?
-        $portfolioExists = Portfolio::find($portfolioId)->whereBelongsTo(Auth::user())->exist();
+        $portfolioExists = Portfolio::find($portfolioId)->whereBelongsTo(Auth::user())->exists();
 
         if (!$portfolioExists) {
             return ErrorResponse::respondErrorMsg('Das angegebene Portfolio kann dem User nicht zugeordnet werden.');

@@ -21,4 +21,9 @@ class PortfolioEntry extends BaseModel
     {
         return $this->hasMany(PortfolioEntryValue::class);
     }
+
+    protected $fillable = [
+        'description',
+        'portfolio_id'
+    ];
 }

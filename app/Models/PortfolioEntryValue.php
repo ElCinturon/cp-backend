@@ -9,9 +9,18 @@ class PortfolioEntryValue extends BaseModel
 {
     use HasFactory;
 
+    // Updated_at/created_at Spalten deaktivieren
+    public $timestamps = false;
+
     // Beziehung zu Portfolioentry herstellen
     public function portfolioEntry(): BelongsTo
     {
         return $this->belongsTo(PortfolioEntry::class);
     }
+
+    protected $fillable = [
+        'portfolio_entries_id',
+        'time',
+        'value'
+    ];
 }
