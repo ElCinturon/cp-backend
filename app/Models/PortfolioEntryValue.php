@@ -19,7 +19,7 @@ class PortfolioEntryValue extends BaseModel
     }
 
     protected $fillable = [
-        'portfolio_entries_id',
+        'portfolio_entry_id',
         'time',
         'value'
     ];

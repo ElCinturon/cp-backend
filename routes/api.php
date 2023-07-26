@@ -72,4 +72,7 @@ Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
 
     // Neuen Portfolioentry speichern
     Route::post('entry', [PortfolioController::class, 'addEntry']);
+
+    // Alle Portfolioentries zu Portfolio abrufen
+    Route::get('{id}/entries', [PortfolioController::class, 'getAllEntries']);
 });

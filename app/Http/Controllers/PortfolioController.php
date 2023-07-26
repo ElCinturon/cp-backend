@@ -11,6 +11,7 @@ use App\ResponseHelper\SuccessfulResponse;
 use \Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 
 class PortfolioController extends Controller
@@ -112,8 +113,19 @@ class PortfolioController extends Controller
         }
 
         // Anfangsvalue anlegen
-        PortfolioEntryValue::create(['portfolio_entries_id' => $portfolioEntry->id, 'time' => $timestamp, 'value' => $value]);
+        PortfolioEntryValue::create(['portfolio_entry_id' => $portfolioEntry->id, 'time' => $timestamp, 'value' => $value]);
 
         return SuccessfulResponse::respondSuccess(status: 201);
+    }
+
+    // Gibt alle Portfolioentries des aktuellen Users zu dem übergebenen Portfolio zurück
+    public function getAllEntries(string $id): Response
+    {
+        $portfolio = Portfolio::whereBelongsTo(Auth::user())->find($id);
+        $portfolioEntries = PortfolioEntry::whereBelongsTo($portfolio)->with(['portfolioEntryValues' => function (Builder $query) {
+            $query->orderBy('time', 'desc')->first();
+        }])->get();
+
+        return response($portfolioEntries);
     }
 }

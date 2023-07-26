@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('portfolio_entry_values', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('portfolio_entries_id')->constrained();
+            $table->foreignId('portfolio_entry_id')->constrained();
             $table->dateTime('time');
             $table->decimal('value', 12, 2);
 
-            $table->unique(['portfolio_entries_id', 'time']);
+            $table->unique(['portfolio_entry_id', 'time']);
         });
     }
 
