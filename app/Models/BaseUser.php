@@ -11,6 +11,14 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 
+/**
+ * App\Models\BaseUser
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|BaseUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BaseUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BaseUser query()
+ * @mixin \Eloquent
+ */
 class BaseUser extends BaseModel implements
 AuthenticatableContract,
 AuthorizableContract,
