@@ -82,21 +82,23 @@ class PortfolioController extends Controller
         $request->validate([
             'description' => [
                 'required', 'string'
-            ], 'value' => [
-                'required', 'numeric'
-            ], 'datetime' => [
+            ], 'portfolioEntryValues' => [
+                'required', 'array', 'min:1', 'max:2'
+            ], 'portfolioEntryValues.0.time' => [
                 'required', 'date'
+            ],
+            'portfolioEntryValues.0.value' => [
+                'required', 'numeric'
             ],
             'portfolioId' => [
                 'required', 'numeric'
             ]
-
         ]);
 
         $description = $request->input('description');
         $portfolioId = $request->input('portfolioId');
-        $timestamp = $request->input('datetime');
-        $value = $request->input('value');
+        $timestamp = $request->input('portfolioEntryValues.0.time');
+        $value = $request->input('portfolioEntryValues.0.value');
 
         // Portfolio-Id des Users existiert?
         $portfolioExists = Portfolio::find($portfolioId)->whereBelongsTo(Auth::user())->exists();
@@ -121,10 +123,11 @@ class PortfolioController extends Controller
     // Gibt alle Portfolioentries des aktuellen Users zu dem übergebenen Portfolio zurück
     public function getAllEntries(string $id): Response
     {
+        // Portfolio suchen
         $portfolio = Portfolio::whereBelongsTo(Auth::user())->find($id);
-        $portfolioEntries = PortfolioEntry::whereBelongsTo($portfolio)->with(['portfolioEntryValues' => function (Builder $query) {
-            $query->orderBy('time', 'desc')->first();
-        }])->get();
+
+        // Einträge mit dem aktuellsten Value suchen
+        $portfolioEntries = PortfolioEntry::whereBelongsTo($portfolio)->with(['latestValue'])->get();
 
         return response($portfolioEntries);
     }
