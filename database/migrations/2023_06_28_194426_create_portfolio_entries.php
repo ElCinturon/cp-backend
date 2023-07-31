@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('portfolio_entries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('portfolio_id')->constrained();
+            $table->foreignId('portfolio_id')->constrained()->cascadeOnDelete();
             $table->string('description');
             $table->dateTime('created_at');
             $table->dateTime('updated_at');

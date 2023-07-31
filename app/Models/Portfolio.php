@@ -51,6 +51,22 @@ class Portfolio extends BaseModel
         return $this->hasMany(PortfolioEntry::class);
     }
 
+    protected function getTotalEntriesAttribute(): int
+    {
+        return $this->portfolioEntries()->count();
+    }
+
+
+    protected function getTotalValueAttribute(): int
+    {
+        $entries = $this->portfolioEntries()->with('latestValue')->get();
+        $sum = 0;
+        foreach ($entries as $entrie) {
+            $sum += $entrie->latestValue->value;
+        }
+        return $sum;
+    }
+
     protected $fillable = [
         'description',
         'type_id',
@@ -58,4 +74,6 @@ class Portfolio extends BaseModel
     ];
 
     protected $hidden = [];
+
+    protected $appends = ['total_entries', 'total_value'];
 }

@@ -11,7 +11,6 @@ use App\ResponseHelper\SuccessfulResponse;
 use \Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 
 class PortfolioController extends Controller
@@ -82,12 +81,12 @@ class PortfolioController extends Controller
         $request->validate([
             'description' => [
                 'required', 'string'
-            ], 'portfolioEntryValues' => [
-                'required', 'array', 'min:1', 'max:2'
-            ], 'portfolioEntryValues.0.time' => [
+            ], 'latestValue' => [
+                'required'
+            ], 'latestValue.time' => [
                 'required', 'date'
             ],
-            'portfolioEntryValues.0.value' => [
+            'latestValue.value' => [
                 'required', 'numeric'
             ],
             'portfolioId' => [
@@ -97,8 +96,8 @@ class PortfolioController extends Controller
 
         $description = $request->input('description');
         $portfolioId = $request->input('portfolioId');
-        $timestamp = $request->input('portfolioEntryValues.0.time');
-        $value = $request->input('portfolioEntryValues.0.value');
+        $timestamp = $request->input('latestValue.time');
+        $value = $request->input('latestValue.value');
 
         // Portfolio-Id des Users existiert?
         $portfolioExists = Portfolio::find($portfolioId)->whereBelongsTo(Auth::user())->exists();
