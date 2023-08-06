@@ -130,4 +130,16 @@ class PortfolioController extends Controller
 
         return response($portfolioEntries);
     }
+
+    // Gibt Portfolioentry mit allen Values zurück
+    public function getEntry(string $portfolioId, string $id): Response
+    {
+        // Portfolio suchen
+        $portfolio = Portfolio::whereBelongsTo(Auth::user())->find($portfolioId);
+
+        // Eintrag mit allen Values abrufen
+        $portfolioEntry = PortfolioEntry::whereBelongsTo($portfolio)->with(['portfolioEntryValues'])->find($id);
+
+        return response($portfolioEntry);
+    }
 }

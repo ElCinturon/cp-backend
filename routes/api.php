@@ -75,4 +75,7 @@ Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
 
     // Alle Portfolioentries zu Portfolio abrufen
     Route::get('{id}/entries', [PortfolioController::class, 'getAllEntries']);
+
+    // Einen Portfolioentry mit allen Values abrufen
+    Route::get('{portfolioId}/entries/{id}', [PortfolioController::class, 'getEntry']);
 });
