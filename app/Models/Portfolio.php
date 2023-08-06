@@ -59,12 +59,7 @@ class Portfolio extends BaseModel
 
     protected function getTotalValueAttribute(): int
     {
-        $entries = $this->portfolioEntries()->with('latestValue')->get();
-        $sum = 0;
-        foreach ($entries as $entrie) {
-            $sum += $entrie->latestValue->value;
-        }
-        return $sum;
+        return $this->portfolioEntries()->with('latestValue')->get()->sum('latestValue.value');
     }
 
     protected $fillable = [
