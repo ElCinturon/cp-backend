@@ -137,9 +137,56 @@ class PortfolioController extends Controller
         // Portfolio suchen
         $portfolio = Portfolio::whereBelongsTo(Auth::user())->find($portfolioId);
 
+        if (!$portfolio) {
+            return ErrorResponse::respondErrorMsg('Das angegebene Portfolio kann dem User nicht zugeordnet werden.');
+        }
+
         // Eintrag mit allen Values abrufen
         $portfolioEntry = PortfolioEntry::whereBelongsTo($portfolio)->with(['portfolioEntryValues'])->find($id);
 
+        if (!$portfolioEntry) {
+            return ErrorResponse::respondErrorMsg('Der angegebene Portfolioeintrag konnte nicht gefunden werden!');
+        }
+
         return response($portfolioEntry);
+    }
+
+
+    // Gibt Portfolioentry mit allen Values zurück
+    public function setValue(Request $request, string $portfolioId, string $entryId): Response
+    {
+        $request->validate([
+            'time' => [
+                'required', 'date'
+            ], 'value' => [
+                'required', 'numeric'
+            ]
+        ]);
+
+        // Portfolio suchen
+        $portfolio = Portfolio::whereBelongsTo(Auth::user())->find($portfolioId);
+
+        if (!$portfolio) {
+            return ErrorResponse::respondErrorMsg('Das angegebene Portfolio kann dem User nicht zugeordnet werden.');
+        }
+
+        // Eintrag abrufen
+        $portfolioEntry = PortfolioEntry::whereBelongsTo($portfolio)->find($entryId)->exists();
+
+        if (!$portfolioEntry) {
+            return ErrorResponse::respondErrorMsg('Der angegebene Portfolioeintrag konnte nicht gefunden werden!');
+        }
+
+        $entryValue = new PortfolioEntryValue();
+        $entryValue->fill($request->all());
+        $entryValue->portfolio_entry_id = $entryId;
+
+        $entryValue = PortfolioEntryValue::firstOrCreate($entryValue);
+
+        if (!$entryValue->wasRecentlyCreated) {
+            return ErrorResponse::respondErrorMsg(['time' => 'Zu dem angegebenen Zeitpunkt existiert bereits ein Werteintrag!']);
+        }
+
+        return SuccessfulResponse::respondSuccess(status: 201);;
     }
 }
