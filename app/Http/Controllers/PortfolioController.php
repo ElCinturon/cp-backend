@@ -181,7 +181,7 @@ class PortfolioController extends Controller
         $entryValue->fill($request->all());
         $entryValue->portfolio_entry_id = $entryId;
 
-        $entryValue = PortfolioEntryValue::firstOrCreate($entryValue);
+        $entryValue = PortfolioEntryValue::firstOrCreate($entryValue->toSnakeCaseArray());
 
         if (!$entryValue->wasRecentlyCreated) {
             return ErrorResponse::respondErrorMsg(['time' => 'Zu dem angegebenen Zeitpunkt existiert bereits ein Werteintrag!']);

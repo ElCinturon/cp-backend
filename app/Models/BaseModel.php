@@ -59,7 +59,7 @@ class BaseModel extends Model
         parent::fill($attributes);
     }
 
-    // Sorgt dafür, dass beim Abruf des Arrays der Models die Keys immer CamelCase sind.
+    // Sorgt dafür, dass beim Abruf des Arrays der Models die Keys immer CamelCase sind. (Wird intern aufgerufen)
     public function toArray()
     {
         $array = parent::toArray();
@@ -82,5 +82,11 @@ class BaseModel extends Model
             }
         }
         return $result;
+    }
+
+    // Gibt Array mit Keys als Snake_Case aus (Wie in DB)
+    public function toSnakeCaseArray()
+    {
+        return parent::toArray();
     }
 }
