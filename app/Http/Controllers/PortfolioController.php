@@ -11,6 +11,7 @@ use App\ResponseHelper\SuccessfulResponse;
 use \Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 
 class PortfolioController extends Controller
@@ -131,7 +132,7 @@ class PortfolioController extends Controller
         return response($portfolioEntries);
     }
 
-    // Gibt Portfolioentry mit allen Values zurück
+    // Gibt Portfolioentry mit allen Values (DESC sortiert) zurück
     public function getEntry(string $portfolioId, string $id): Response
     {
         // Portfolio suchen
@@ -142,7 +143,9 @@ class PortfolioController extends Controller
         }
 
         // Eintrag mit allen Values abrufen
-        $portfolioEntry = PortfolioEntry::whereBelongsTo($portfolio)->with(['portfolioEntryValues'])->find($id);
+        $portfolioEntry = PortfolioEntry::whereBelongsTo($portfolio)->with('portfolioEntryValues', function (Builder $query) {
+            $query->orderBy('time', 'desc');
+        })->find($id);
 
         if (!$portfolioEntry) {
             return ErrorResponse::respondErrorMsg('Der angegebene Portfolioeintrag konnte nicht gefunden werden!');
@@ -152,7 +155,7 @@ class PortfolioController extends Controller
     }
 
 
-    // Gibt Portfolioentry mit allen Values zurück
+    // Speichert Portfolioentryvalue
     public function setValue(Request $request, string $portfolioId, string $entryId): Response
     {
         $request->validate([
@@ -181,12 +184,44 @@ class PortfolioController extends Controller
         $entryValue->fill($request->all());
         $entryValue->portfolio_entry_id = $entryId;
 
-        $entryValue = PortfolioEntryValue::firstOrCreate($entryValue->toSnakeCaseArray());
 
-        if (!$entryValue->wasRecentlyCreated) {
+        $exists = PortfolioEntryValue::wherePortfolioEntryId($entryId)->where('time', $entryValue->time)->exists();
+
+        if ($exists) {
             return ErrorResponse::respondErrorMsg(['time' => 'Zu dem angegebenen Zeitpunkt existiert bereits ein Werteintrag!']);
         }
 
+        $entryValue->save();
+
         return SuccessfulResponse::respondSuccess(status: 201);;
+    }
+
+
+    // Löscht Portfolioentryvalue
+    public function deleteValue(string $portfolioId, string $entryId, string $id): Response
+    {
+        // Portfolio suchen
+        $portfolio = Portfolio::whereBelongsTo(Auth::user())->find($portfolioId);
+
+        if (!$portfolio) {
+            return ErrorResponse::respondErrorMsg('Das angegebene Portfolio kann dem User nicht zugeordnet werden.');
+        }
+
+        // Eintrag abrufen
+        $portfolioEntry = PortfolioEntry::whereBelongsTo($portfolio)->find($entryId);
+
+        if (!$portfolioEntry) {
+            return ErrorResponse::respondErrorMsg('Der angegebene Portfolioeintrag konnte nicht gefunden werden!');
+        }
+
+        $portfolioEntryValue = PortfolioEntryValue::find($id);
+
+        if (!$portfolioEntryValue) {
+            return ErrorResponse::respondErrorMsg('Der Werteeintrag konnte nicht gefunden werden!');
+        }
+
+        $portfolioEntryValue->delete();
+
+        return SuccessfulResponse::respondSuccess();
     }
 }

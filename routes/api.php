@@ -80,5 +80,8 @@ Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
     Route::get('{portfolioId}/entries/{id}', [PortfolioController::class, 'getEntry']);
 
     // Einen Portfolioentryvalue anlegen
-    Route::post('{portfolioId}/entries/{id}', [PortfolioController::class, 'setValue']);
+    Route::post('{portfolioId}/entries/{id}/values', [PortfolioController::class, 'setValue']);
+
+    // Einen Portfolioentryvalue löschen
+    Route::delete('{portfolioId}/entries/{entryid}/values/{id}', [PortfolioController::class, 'deleteValue']);
 });
