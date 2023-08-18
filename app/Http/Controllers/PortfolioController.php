@@ -120,6 +120,29 @@ class PortfolioController extends Controller
         return SuccessfulResponse::respondSuccess(status: 201);
     }
 
+
+    // Löscht Entry
+    public function deleteEntry(int $portfolioId, int $id): Response
+    {
+        // Portfolio-Id des Users existiert?
+        $portfolio = Portfolio::find($portfolioId)->whereBelongsTo(Auth::user())->get();
+
+        if (!$portfolio) {
+            return ErrorResponse::respondErrorMsg('Das angegebene Portfolio kann dem User nicht zugeordnet werden.');
+        }
+
+        // Portfolioeintrag löschen
+        $portfolioEntry = PortfolioEntry::whereBelongsTo($portfolio)->find($id);
+
+        if ($portfolioEntry != null) {
+            $portfolioEntry->delete();
+        } else {
+            return ErrorResponse::respondErrorMsg('Der Portfolioeintrag konnte nicht gefunden werden!');
+        }
+
+        return SuccessfulResponse::respondSuccess(status: 201);
+    }
+
     // Gibt alle Portfolioentries des aktuellen Users zu dem übergebenen Portfolio zurück
     public function getAllEntries(string $id): Response
     {
