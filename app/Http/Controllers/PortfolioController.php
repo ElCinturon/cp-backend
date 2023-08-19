@@ -47,6 +47,21 @@ class PortfolioController extends Controller
         return SuccessfulResponse::respondSuccess(status: 201);
     }
 
+    // Löscht Portfolio anhand von Id
+    public function delete(int $id): Response
+    {
+        // Portfolio suchen
+        $portfolio = Portfolio::whereBelongsTo(Auth::user())->find($id);
+
+        if (!$portfolio) {
+            return ErrorResponse::respondErrorMsg('Das angegebene Portfolio konnte nicht gefunden werden!');
+        }
+
+        $portfolio->delete();
+
+        return SuccessfulResponse::respondSuccess(status: 201);
+    }
+
     // Gibt alle Portfolios des aktuellen Users zurück
     public function getAll(): Response
     {
@@ -140,7 +155,7 @@ class PortfolioController extends Controller
             return ErrorResponse::respondErrorMsg('Der Portfolioeintrag konnte nicht gefunden werden!');
         }
 
-        return SuccessfulResponse::respondSuccess(status: 201);
+        return SuccessfulResponse::respondSuccess();
     }
 
     // Gibt alle Portfolioentries des aktuellen Users zu dem übergebenen Portfolio zurück
