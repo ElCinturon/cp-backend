@@ -47,6 +47,41 @@ class PortfolioController extends Controller
         return SuccessfulResponse::respondSuccess(status: 201);
     }
 
+    // Ändert Portfolio
+    public function edit(Request $request, int $id): Response
+    {
+        $request->validate([
+            'description' => [
+                'required'
+            ], 'typeCode' => [
+                'required'
+            ]
+        ]);
+
+        $description = $request->input('description');
+        $typeCode = $request->input('typeCode');
+
+        // Type-Id abrufen. Wenn nicht existiert, Fehler zurückgeben
+        $typeId = PortfolioType::firstWhere('code', $typeCode)->id;
+
+        if (!$typeId) {
+            return ErrorResponse::respondErrorMsg(['typeCode' => 'Der Portfoliotype ' . $type_code . ' existiert nicht!']);
+        }
+
+        // Portfolio suchen
+        $portfolio = Portfolio::whereBelongsTo(Auth::user())->find($id);
+
+        if (!$portfolio) {
+            return ErrorResponse::respondErrorMsg('Das angegebene Portfolio konnte nicht gefunden werden!');
+        }
+
+        $portfolio->description = $description;
+        $portfolio->type_id = $typeId;
+        $portfolio->save();
+
+        return SuccessfulResponse::respondSuccess();
+    }
+
     // Löscht Portfolio anhand von Id
     public function delete(int $id): Response
     {

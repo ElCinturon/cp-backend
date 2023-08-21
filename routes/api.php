@@ -67,6 +67,9 @@ Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
     // Neues Portfolio speichern
     Route::post('', [PortfolioController::class, 'add']);
 
+    // Portfolio updaten
+    Route::put('{id}', [PortfolioController::class, 'edit']);
+
     // Portfolio löschen
     Route::delete('{id}', [PortfolioController::class, 'delete']);
 
