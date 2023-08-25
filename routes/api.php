@@ -93,4 +93,7 @@ Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
 
     // Einen Portfolioentryvalue löschen
     Route::delete('{portfolioId}/entries/{entryid}/values/{id}', [PortfolioController::class, 'deleteValue']);
+
+    // Einen Portfolioentryvalue ändern
+    Route::put('{portfolioId}/entries/{entryid}/values/{id}', [PortfolioController::class, 'editValue']);
 });
