@@ -30,7 +30,7 @@ class LoginController extends Controller
             $user = Auth::user();
 
             // Login erfolgreich Return Username
-            return SuccessfulResponse::respondSuccess(["username" => $user->username]);
+            return SuccessfulResponse::respondSuccess(["username" => $user->username, "id" => $user->id]);
         }
 
         // Login fehlgeschlagen.

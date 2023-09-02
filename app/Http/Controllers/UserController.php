@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\ResponseHelper\ErrorResponse;
 use App\ResponseHelper\SuccessfulResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -21,5 +23,25 @@ class UserController extends Controller
         }
 
         return SuccessfulResponse::respondSuccess(['userExists' => $exists]);
+    }
+
+    // Wenn Löschung von User selber kommt, entfernen
+    public function delete(int $id): Response
+    {
+        // User abrufen
+        $user = User::find($id);
+
+        // Wenn gefundener User mit aktuellem Nutzer übereinstimmt, diesen löschen
+        if ($user && $user->id == Auth::user()->id) {
+
+            $user->delete();
+
+            // Usersession entfernen
+            auth('web')->logout();
+
+            return SuccessfulResponse::respondSuccess();
+        } else {
+            return ErrorResponse::respondErrorMsg("Nutzer konnte nicht gefunden werden oder es fehlen Berechtigungen!");
+        }
     }
 }

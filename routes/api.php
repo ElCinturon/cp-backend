@@ -37,6 +37,9 @@ Route::controller(UserController::class)->group(function () {
 
     Route::prefix('user')->group(function () {
 
+        // Löscht User anhand von ID
+        Route::middleware('auth:sanctum')->delete('{id}', 'delete');
+
         // User anhand von username abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
         Route::get('username/exists/{user:username}', 'exists')
             ->missing(function () {
