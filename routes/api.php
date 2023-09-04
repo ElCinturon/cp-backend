@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\AuthController;
 use App\ResponseHelper\ErrorResponse;
 
 /*
@@ -22,9 +22,12 @@ use App\ResponseHelper\ErrorResponse;
 
 // Login
 Route::post('/login', [
-    LoginController::class,
+    AuthController::class,
     'authenticate'
 ]);
+
+// Loggt User aus
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Registrierung
 Route::post('/registration', [
@@ -37,8 +40,10 @@ Route::controller(UserController::class)->group(function () {
 
     Route::prefix('user')->group(function () {
 
-        // Löscht User anhand von ID
-        Route::middleware('auth:sanctum')->delete('{id}', 'delete');
+        Route::middleware('auth:sanctum')->group(function () {
+            // Löscht User anhand von ID
+            Route::delete('{id}', [UserController::class, 'deleteOrLogout', true]);
+        });
 
         // User anhand von username abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
         Route::get('username/exists/{user:username}', 'exists')
