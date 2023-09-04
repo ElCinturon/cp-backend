@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use \Symfony\Component\HttpFoundation\Response;
 
-class LoginController extends Controller
+class AuthController extends Controller
 {
     public function authenticate(Request $request): Response
     {
@@ -35,5 +35,14 @@ class LoginController extends Controller
 
         // Login fehlgeschlagen.
         return ErrorResponse::respondErrorMsg('Der angegebene Nutzer existiert nicht oder das Passwort ist nicht korrekt.');
+    }
+
+    // loggt User aus
+    public function logout(): Response
+    {
+        // Usersession entfernen
+        auth('web')->logout();
+
+        return SuccessfulResponse::respondSuccess();
     }
 }
