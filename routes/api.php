@@ -42,7 +42,7 @@ Route::controller(UserController::class)->group(function () {
 
         Route::middleware('auth:sanctum')->group(function () {
             // Löscht User anhand von ID
-            Route::delete('{id}', [UserController::class, 'deleteOrLogout', true]);
+            Route::delete('{id}', [UserController::class, 'delete', true]);
         });
 
         // User anhand von username abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
