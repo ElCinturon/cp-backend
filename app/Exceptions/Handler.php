@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
+use App\ResponseHelper\ErrorResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use RuntimeException;
 use Throwable;
+use Illuminate\Http\Request;
 
 class Handler extends ExceptionHandler
 {
@@ -25,6 +28,15 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        // Bei einer Exception wird hier der Response generiert
+        $this->renderable(function (RuntimeException $e) {
+            $msg = 'Es ist ein unbekannter Fehler aufgetreten!';
+            if (config('app.debug')) {
+                $msg = $msg . $e;
+            }
+            return ErrorResponse::respondErrorMsg($msg, 500);
         });
     }
 }

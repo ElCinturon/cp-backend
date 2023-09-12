@@ -1,19 +1,110 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\AuthController;
+use App\ResponseHelper\ErrorResponse;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+/*
+ * |--------------------------------------------------------------------------
+ * | API Routes
+ * |--------------------------------------------------------------------------
+ * |
+ * | Here is where you can register API routes for your application. These
+ * | routes are loaded by the RouteServiceProvider and all of them will
+ * | be assigned to the "api" middleware group. Make something great!
+ * |
+ */
+
+
+// Login
+Route::post('/login', [
+    AuthController::class,
+    'authenticate'
+]);
+
+// Loggt User aus
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
+// Registrierung
+Route::post('/registration', [
+    RegistrationController::class,
+    'register'
+]);
+
+// User routes
+Route::controller(UserController::class)->group(function () {
+
+    Route::prefix('user')->group(function () {
+
+        Route::middleware('auth:sanctum')->group(function () {
+            // Löscht User anhand von ID
+            Route::delete('{id}', [UserController::class, 'delete', true]);
+        });
+
+        // User anhand von username abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
+        Route::get('username/exists/{user:username}', 'exists')
+            ->missing(function () {
+                return ErrorResponse::respondErrorMsg([
+                    'userExists' => false
+                ]);
+            });
+
+        // User anhand von Email abfragen. Wenn nicht existiert entsprechendes Json zurückgeben
+        Route::get('email/exists/{user:email}', 'exists')
+            ->missing(function () {
+                return response()->json([
+                    'userExists' => false
+                ]);
+            });
+    });
+});
+
+
+// Portfolio routes
+Route::prefix('portfolios')->middleware('auth:sanctum')->group(function () {
+    // Alle Portfolios vom User abrufen
+    Route::get('', [PortfolioController::class, 'getAll']);
+
+    // Portfolio anhand von ID abrufen
+    Route::get('{id}', [PortfolioController::class, 'getOneById'])->whereNumber('id');
+
+    // Neues Portfolio speichern
+    Route::post('', [PortfolioController::class, 'add']);
+
+    // Portfolio updaten
+    Route::put('{id}', [PortfolioController::class, 'edit']);
+
+    // Portfolio löschen
+    Route::delete('{id}', [PortfolioController::class, 'delete']);
+
+    // Portfoliotypen abrufen
+    Route::get('types', [PortfolioController::class, 'getAllTypes']);
+
+    // Neuen Portfolioentry speichern
+    Route::post('entry', [PortfolioController::class, 'addEntry']);
+
+    // Portfolioentry ändern
+    Route::put('{portfolioId}/entries/{id}', [PortfolioController::class, 'editEntry']);
+
+    // Portfolioentry löschen
+    Route::delete('{portfolioId}/entries/{id}', [PortfolioController::class, 'deleteEntry']);
+
+    // Alle Portfolioentries zu Portfolio abrufen
+    Route::get('{id}/entries', [PortfolioController::class, 'getAllEntries']);
+
+    // Einen Portfolioentry mit allen Values abrufen
+    Route::get('{portfolioId}/entries/{id}', [PortfolioController::class, 'getEntry']);
+
+    // Einen Portfolioentryvalue anlegen
+    Route::post('{portfolioId}/entries/{id}/values', [PortfolioController::class, 'setValue']);
+
+    // Einen Portfolioentryvalue löschen
+    Route::delete('{portfolioId}/entries/{entryid}/values/{id}', [PortfolioController::class, 'deleteValue']);
+
+    // Einen Portfolioentryvalue ändern
+    Route::put('{portfolioId}/entries/{entryid}/values/{id}', [PortfolioController::class, 'editValue']);
 });
