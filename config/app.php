@@ -30,6 +30,13 @@ return [
 
     'version' => env('APP_VERSION', '1.0.0'),
 
+
+
+    /*
+        Gibt die Frontendurl zurück. Wird für Passwortd-Reset Link in Mail gebraucht
+    */
+    'frontend_url' => env('FRONTEND_URL', '#'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

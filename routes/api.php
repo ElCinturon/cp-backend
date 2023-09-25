@@ -35,6 +35,15 @@ Route::post('/registration', [
     'register'
 ]);
 
+// Passwort Reset-Link senden
+Route::post(
+    '/forgot-password',
+    [AuthController::class, 'sendPasswordResetLink']
+);
+
+// Prüft Token der in Link aufruf enthalten ist
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
 // User routes
 Route::controller(UserController::class)->group(function () {
 
