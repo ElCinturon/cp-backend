@@ -68,7 +68,7 @@ class AuthController extends Controller
 
             if (!$identifier) {
                 // User kann nicht gefunden werden - nichts tun!
-                return ErrorResponse::respondErrorMsg('User konnte nicht gefunden werden');
+                return SuccessfulResponse::respondSuccess();
             } else {
                 $identifier = $identifier->email;
             }
